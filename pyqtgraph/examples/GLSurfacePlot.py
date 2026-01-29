@@ -64,6 +64,30 @@ p3.translate(2, -18, 0)
 w.addItem(p3)
 
 
+## Torus surface with 2D x, y coordinates and grid enabled
+nx, ny = 25, 25
+u = np.linspace(0, 2*np.pi, nx)
+v = np.linspace(0, 2*np.pi, ny)
+u_grid, v_grid = np.meshgrid(u, v, indexing='ij')
+
+# Torus parametric equations
+R = 3.0  # major radius
+r = 1.0  # minor radius
+x_torus = (R + r * np.cos(v_grid)) * np.cos(u_grid)
+y_torus = (R + r * np.cos(v_grid)) * np.sin(u_grid)
+z_torus = r * np.sin(v_grid)
+
+# Create torus colors based on v parameter
+colors_torus = np.ones((nx, ny, 4), dtype=np.float32)
+colors_torus[..., 0] = np.cos(v_grid) * 0.5 + 0.5  # Red channel
+colors_torus[..., 1] = np.sin(u_grid) * 0.5 + 0.5  # Green channel
+colors_torus[..., 2] = 0.7                          # Blue channel
+
+p4_torus = gl.GLSurfacePlotItem(x=x_torus, y=y_torus, z=z_torus, colors=colors_torus,
+                                shader='normalColor', showGrid=True, lineColor=(1, 1, 1, 0.5),
+                                lineWidth=0.5)
+p4_torus.translate(-10, -10, 8)
+w.addItem(p4_torus)
 
 
 ## Animated example
@@ -83,16 +107,16 @@ z = np.sin(d[np.newaxis,...] + phi.reshape(phi.shape[0], 1, 1)) / d2[np.newaxis,
 ## create a surface plot, tell it to use the 'heightColor' shader
 ## since this does not require normal vectors to render (thus we 
 ## can set computeNormals=False to save time when the mesh updates)
-p4 = gl.GLSurfacePlotItem(x=x[:,0], y = y[0,:], shader='heightColor', computeNormals=False, smooth=False)
-p4.shader()['colorMap'] = np.array([0.2, 2, 0.5, 0.2, 1, 1, 0.2, 0, 2])
-p4.translate(10, 10, 0)
-w.addItem(p4)
+p5 = gl.GLSurfacePlotItem(x=x[:,0], y = y[0,:], shader='heightColor', computeNormals=False, smooth=False)
+p5.shader()['colorMap'] = np.array([0.2, 2, 0.5, 0.2, 1, 1, 0.2, 0, 2])
+p5.translate(10, 10, 0)
+w.addItem(p5)
 
 index = 0
 def update():
-    global p4, z, index
+    global p5, z, index
     index -= 1
-    p4.setData(z=z[index%z.shape[0]])
+    p5.setData(z=z[index%z.shape[0]])
     
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
