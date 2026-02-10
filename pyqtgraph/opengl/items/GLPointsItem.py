@@ -170,7 +170,7 @@ class GLPointsItem(GLGraphicsItem):
 
         # Enable depth testing
         GL.glEnable(GL.GL_DEPTH_TEST)
-        GL.glDepthFunc(GL.GL_LESS)
+        GL.glDepthFunc(GL.GL_LEQUAL) # GL.glDepthFunc(GL.GL_LESS)
         GL.glDepthMask(GL.GL_TRUE)
 
         # Enable point sprite/size
@@ -218,7 +218,10 @@ SHADER_LEGACY = {
         varying vec4 v_color;
         void main() {
             v_color = a_color;
-            gl_Position = u_mvp * a_position;
+            //gl_Position = u_mvp * a_position;
+            vec4 clip = u_mvp * a_position;
+            clip.z -= 1e-4 * clip.w;
+            gl_Position = clip;
             gl_PointSize = u_pointSize;
         }
     """,
@@ -242,7 +245,10 @@ SHADER_CORE = {
         out vec4 v_color;
         void main() {
             v_color = a_color;
-            gl_Position = u_mvp * a_position;
+            //gl_Position = u_mvp * a_position;
+            vec4 clip = u_mvp * a_position;
+            clip.z -= 1e-4 * clip.w;
+            gl_Position = clip;
             gl_PointSize = u_pointSize;
         }
     """,

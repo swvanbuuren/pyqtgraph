@@ -1,22 +1,10 @@
-"""
-This example demonstrates the use of GLPointsItem.
-"""
-import sys
+"""This example demonstrates the use of GLPointsItem."""
 
 import numpy as np
 
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtGui
 import pyqtgraph.opengl as gl
 from pyqtgraph.opengl.items.GLPointsItem import GLPointsItem
-from pyqtgraph.Qt import QtCore
-
-if 'darwin' in sys.platform:
-    fmt = QtGui.QSurfaceFormat()
-    fmt.setRenderableType(fmt.RenderableType.OpenGL)
-    fmt.setProfile(fmt.OpenGLContextProfile.CoreProfile)
-    fmt.setVersion(4, 1)
-    QtGui.QSurfaceFormat.setDefaultFormat(fmt)
 
 ## Create a GL View widget to display data
 app = pg.mkQApp("GLPointsItem Example")
@@ -39,8 +27,14 @@ surface = gl.GLSurfacePlotItem(x=x, y=y, z=z, shader='normalColor',
                           showGrid=True, lineColor=(0.25,0.25,0.25,1))
 w.addItem(surface)
 
+# create data points from x, y, z for GLPointsItem
+data = np.empty((x.size * y.size, 3), dtype=np.float32)
+data[:, 0] = np.repeat(x, y.size)
+data[:, 1] = np.tile(y, x.size)
+data[:, 2] = z.flatten()
+
 points = GLPointsItem(
-    pos=np.random.randn(1000, 3),
+    pos=data,
     color=(1.0, 0.0, 0.0, 1.0),
     size=8.0
 )
