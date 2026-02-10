@@ -30,7 +30,7 @@ class GLPointsItem(GLGraphicsItem):
     def __init__(self, parentItem=None, **kwds):
         """All keyword arguments are passed to setData()"""
         super().__init__()
-        glopts = kwds.pop('glOptions', 'additive')
+        glopts = kwds.pop('glOptions', 'opaque')
         self.setGLOptions(glopts)
         self.pos = None
         self.size = 5.0  # Point size in pixels
@@ -168,6 +168,11 @@ class GLPointsItem(GLGraphicsItem):
         else:
             GL.glVertexAttrib4f(loc, *self.color)
 
+        # Enable depth testing
+        GL.glEnable(GL.GL_DEPTH_TEST)
+        GL.glDepthFunc(GL.GL_LESS)
+        GL.glDepthMask(GL.GL_TRUE)
+
         # Enable point sprite/size
         sfmt = context.format()
         core_forward_compatible = (
@@ -199,6 +204,9 @@ class GLPointsItem(GLGraphicsItem):
         if not core_forward_compatible:
             GL.glDisable(GL.GL_PROGRAM_POINT_SIZE)
             GL.glPointSize(1.0)
+        
+        # Restore depth test state (disable if it was disabled before)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
 
 SHADER_LEGACY = {
