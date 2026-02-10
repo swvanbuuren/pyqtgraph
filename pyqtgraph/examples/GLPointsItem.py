@@ -20,9 +20,10 @@ g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
 w.addItem(g)
 
 ## Saddle example with x and y specified
-x = np.linspace(-8, 8, 50)
-y = np.linspace(-8, 8, 50)
-z = 0.1 * ((x.reshape(50,1) ** 2) - (y.reshape(1,50) ** 2))
+nx, ny = 20, 20
+x = np.linspace(-8, 8, nx)
+y = np.linspace(-8, 8, ny)
+z = 0.1 * ((x.reshape(ny,1) ** 2) - (y.reshape(1,nx) ** 2))
 surface = gl.GLSurfacePlotItem(x=x, y=y, z=z, shader='normalColor',
                           showGrid=True, lineColor=(0.25,0.25,0.25,1))
 w.addItem(surface)
@@ -36,7 +37,7 @@ data[:, 2] = z.flatten()
 points = GLPointsItem(
     pos=data,
     color=(1.0, 0.0, 0.0, 1.0),
-    size=8.0
+    size=4.0
 )
 w.addItem(points)
 
