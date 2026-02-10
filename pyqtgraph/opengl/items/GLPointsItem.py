@@ -218,7 +218,6 @@ SHADER_LEGACY = {
         varying vec4 v_color;
         void main() {
             v_color = a_color;
-            //gl_Position = u_mvp * a_position;
             vec4 clip = u_mvp * a_position;
             clip.z -= 1e-4 * clip.w;
             gl_Position = clip;
@@ -245,7 +244,6 @@ SHADER_CORE = {
         out vec4 v_color;
         void main() {
             v_color = a_color;
-            //gl_Position = u_mvp * a_position;
             vec4 clip = u_mvp * a_position;
             clip.z -= 1e-4 * clip.w;
             gl_Position = clip;
