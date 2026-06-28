@@ -1,3 +1,4 @@
+from ... import functions as fn
 from ...Qt import QtCore, QtWidgets, QtGui
 from ..Parameter import Parameter
 from ..ParameterItem import ParameterItem
@@ -90,6 +91,19 @@ class ActionParameter(Parameter):
     """
     itemClass = ActionParameterItem
     sigActivated = QtCore.Signal(object)
+
+    def setValue(self, value, blockSignal=None):
+        old_value = self.opts.get('value', None)
+        if callable(old_value):
+            fn.disconnect(self.sigActivated, old_value)
+
+        value = super().setValue(value, blockSignal=blockSignal)
+
+        new_value = self.opts.get('value', None)
+        if callable(new_value):
+            self.sigActivated.connect(new_value)
+
+        return value
 
     def activate(self):
         self.sigActivated.emit(self)
