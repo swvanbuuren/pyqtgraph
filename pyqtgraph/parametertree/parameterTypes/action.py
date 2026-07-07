@@ -18,6 +18,7 @@ class ParameterControlledButton(QtWidgets.QPushButton):
         self.clicked.connect(parameter.activate)
         self.updateOpts(parameter, parameter.opts)
 
+    @QtCore.Slot(object, object)
     def updateOpts(self, param, opts):
         # Of the attributes that can be set on a QPushButton, only the text
         # and tooltip attributes are different from standard pushbutton names
@@ -41,6 +42,7 @@ class ParameterControlledButton(QtWidgets.QPushButton):
             setter = getattr(self, f"set{capitalized}")
             setter(opts[attr])
 
+    @QtCore.Slot(object, object)
     def onNameChange(self, param, name):
         self.updateOpts(param, dict(title=param.title()))
 
@@ -105,6 +107,7 @@ class ActionParameter(Parameter):
 
         return value
 
+    @QtCore.Slot()
     def activate(self):
         self.sigActivated.emit(self)
         self.emitStateChanged('activated', None)
