@@ -38,6 +38,54 @@ def test_opts():
     assert _getWidget(param.param('bool')).isEnabled() is False
 
 
+def test_action_parameter_value_callable_activates(qtbot):
+    callback = MagicMock()
+    param = pt.Parameter.create(name='run', type='action', value=callback)
+
+    with qtbot.waitSignal(param.sigActivated, timeout=1000):
+        param.activate()
+
+    callback.assert_called_once_with(param)
+
+
+def test_action_parameter_value_callable_replacement(qtbot):
+    first_callback = MagicMock()
+    second_callback = MagicMock()
+    param = pt.Parameter.create(name='run', type='action', value=first_callback)
+
+    assert param.setValue(first_callback) is first_callback
+    with qtbot.waitSignal(param.sigActivated, timeout=1000):
+        param.activate()
+    first_callback.assert_called_once_with(param)
+
+    assert param.setValue(second_callback) is second_callback
+    with qtbot.waitSignal(param.sigActivated, timeout=1000):
+        param.activate()
+
+    first_callback.assert_called_once_with(param)
+    second_callback.assert_called_once_with(param)
+
+    assert param.setValue(None) is None
+    with qtbot.waitSignal(param.sigActivated, timeout=1000):
+        param.activate()
+
+    second_callback.assert_called_once_with(param)
+
+
+@pytest.mark.qt_log_ignore("Registering dynamic slot")
+def test_action_parameter_value_callable_button_click(qtbot):
+    callback = MagicMock()
+    param = pt.Parameter.create(name='run', type='action', value=callback)
+    tree = pt.ParameterTree()
+    tree.setParameters(param)
+
+    item = next(iter(param.items.keys()))
+    with qtbot.waitSignal(param.sigActivated, timeout=1000):
+        item.button.click()
+
+    callback.assert_called_once_with(param)
+
+
 def test_types():
     paramSpec = [
         dict(name='float', type='float'),
